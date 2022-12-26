@@ -46,7 +46,7 @@
   }
 
   @media screen and (max-width: 924px) {
-    .experience-wrapper {
+    .skills-wrapper {
       grid-template-columns: 1fr;
     }
   }
