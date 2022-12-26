@@ -88,7 +88,7 @@
   }
   .contact-details {
     display: grid;
-    grid-template-columns: 1fr 6fr;
+    grid-template-columns: 1fr 5fr;
     font-size: 14px;
     line-height: 1.4;
     margin-bottom: 30px;

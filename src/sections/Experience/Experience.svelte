@@ -11,7 +11,7 @@
   <div class={`${pageLabel}-wrapper`}>
     <QualificationLabel
       titleLabel={capitalize(pageLabel)}
-      paragraphContent="I lead teams and develop applications. I treak great pride in building great products and working with great people."
+      paragraphContent="I lead teams and develop applications. I take great pride in building great products and working with great people."
     />
     <div class="qualifications">
       <Qualification
