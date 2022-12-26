@@ -96,6 +96,7 @@
       text-transform: uppercase;
       margin-bottom: 10px;
       font-weight: 600;
+      min-width: 100px;
     }
     .icons-wrapper {
       display: flex;

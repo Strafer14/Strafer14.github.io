@@ -35,4 +35,10 @@
     display: grid;
     grid-template-columns: 1fr 2fr;
   }
+
+  @media screen and (max-width: 924px) {
+    .education-wrapper {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

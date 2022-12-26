@@ -44,4 +44,10 @@
       gap: 20px;
     }
   }
+
+  @media screen and (max-width: 924px) {
+    .experience-wrapper {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>
