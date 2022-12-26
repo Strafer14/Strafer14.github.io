@@ -1,5 +1,5 @@
 <div class="footer">
-    Copyright 2022 Michael.
+    Copyright 2022 Michael
 </div>
 
 <style lang="scss">

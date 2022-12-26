@@ -16,7 +16,7 @@
   <div class="wrapper">
     <div class="information">
       <Title titleSize={TitleSize.MAIN}
-        ><span>Hello, my name is Michael.</span></Title
+        ><span>Hello, my name is Michael</span></Title
       >
       <div class="paragraph-wrapper">
         <Paragraph
