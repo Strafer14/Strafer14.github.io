@@ -27,6 +27,10 @@
         paragraphContent="Planning and Organization, Risk Management, Leadership, Problem-solving, JIRA, Scrum."
       />
       <Skill
+        titleLabel="Hipster languages"
+        paragraphContent="Finding hipster programming langauges and packages so I can say I liked them before they were cool"
+      />
+      <Skill
         titleLabel="Cloud Infrastructure & DevOps"
         paragraphContent="AWS, Azure, Terraform, Serverless, CircleCI, Gitlab CI/CD."
       />
