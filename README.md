@@ -13,23 +13,31 @@ npm run preview    # serve the built site
 
 ## Edit content
 
-All copy lives in one typed file: [`src/data/resume.ts`](src/data/resume.ts).
-The homepage (`/`) and the print CV (`/cv`) both render from it, so they never drift.
+All copy lives in one typed file — the **Achievement Bank**,
+[`src/data/achievements.ts`](src/data/achievements.ts). The homepage (`/`) and
+the JSON Resume export (`/resume.json`) are both *views* over it, so they never
+drift. This is the only place to edit résumé content.
 
 Items flagged `todo: true` (and anything wrapped in the `.todo` style) are
-**placeholders** to fill in with real, defensible numbers — currently the
-team-size metric. Search the repo for `TODO` / `todo`.
+**placeholders** to fill in with real, defensible numbers. Search for `TODO` / `todo`.
 
-## PDF CV
+## CV PDFs — via rxresu.me
 
-`/cv` is a print-optimised route. "Download CV" uses the browser's print-to-PDF.
-To commit a real file, see [`scripts/generate-pdf.mjs`](scripts/generate-pdf.mjs):
+CVs are produced in [Reactive Resume](https://rxresu.me), not in this repo. The
+Bank exports the [JSON Resume](https://jsonresume.org) schema at **`/resume.json`**
+(also written to `dist/resume.json` on build), which rxresu.me imports natively.
 
 ```bash
-npm run build && npm run preview &
-npx playwright install chromium    # one-time
-npm run pdf                        # → public/cv.pdf
+npm run dev        # then open http://localhost:4321/resume.json and save it
 ```
+
+1. Import `resume.json` into rxresu.me.
+2. Tailor a copy per job listing **in its editor** (drop/reorder/reword — keep the
+   facts honest; the Bank stays canonical), then export the PDF.
+3. Re-import after editing the Bank whenever the underlying facts change.
+
+The homepage "Download CV" buttons point to `/cv.pdf` — drop your exported master
+CV at [`public/cv.pdf`](public/) to wire them up.
 
 ## Deploy
 

@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import {
   profile, socials, about, experience, projects, skills, education,
-} from '../data/resume';
+} from '../data/achievements';
 
 const nav = [
   { label: 'About', href: '#about' },
@@ -26,7 +26,7 @@ const nav = [
               </a>
             </li>
           ))}
-          <li><a class="nav-cv" href="/cv">CV ↓</a></li>
+          <li><a class="nav-cv" href="/cv.pdf">CV ↓</a></li>
         </ul>
       </nav>
     </div>
@@ -41,7 +41,7 @@ const nav = [
         <p class="hero-sub">{profile.subline}</p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="#work">Selected work <span aria-hidden="true">→</span></a>
-          <a class="btn" href="/cv">Download CV <span aria-hidden="true">↓</span></a>
+          <a class="btn" href="/cv.pdf">Download CV <span aria-hidden="true">↓</span></a>
         </div>
       </div>
       <figure class="hero-photo">
@@ -183,7 +183,7 @@ const nav = [
               </li>
             ))}
           </ul>
-          <a class="btn btn-primary" href="/cv">Download CV <span aria-hidden="true">↓</span></a>
+          <a class="btn btn-primary" href="/cv.pdf">Download CV <span aria-hidden="true">↓</span></a>
         </div>
       </div>
     </section>

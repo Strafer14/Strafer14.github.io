@@ -10,6 +10,28 @@ This document hands off from the *design + bank-build* agent (done) to the
 
 ---
 
+## ⚑ OUTCOME (built — June 2026) — read this first
+
+Michael chose the **simplest** path on both open questions, which overrides the
+DoD and §3 below:
+
+- **No in-repo tailoring skill.** Tailoring happens **manually in the rxresu.me
+  editor** (select / reorder / reword per Job Listing). See [ADR-0005](adr/0005-cvs-render-via-rxresume.md).
+- **No bespoke `/cv` route, no Playwright.** `src/pages/cv.astro` and
+  `scripts/generate-pdf.mjs` were deleted; the `pdf` npm script is gone.
+- **CVs render via rxresu.me** from a JSON Resume export at
+  **`src/pages/resume.json.ts`** (`/resume.json`). Option (b) in §3, chosen over (a).
+- **Bank wired in + redundancy killed.** `index.astro` and `Base.astro` now import
+  from `src/data/achievements.ts`; **`src/data/resume.ts` was deleted** (it is the
+  only editable data file now). `src/data/past.md` was already gone.
+- Homepage "Download CV" links point to `/cv.pdf` — drop the exported master CV at
+  `public/cv.pdf` to wire them.
+
+The sections below are the **original handoff** (historical). The model rules in
+"The model" still apply; the DoD's "build a skill" and §3's recommendation (a) do not.
+
+---
+
 ## Status
 
 **Done (previous agent):**

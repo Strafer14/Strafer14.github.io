@@ -1,5 +1,7 @@
 # LLM adapts Achievement phrasing at the output layer, with a human in the loop
 
+**Status:** Superseded by [ADR-0005](0005-cvs-render-via-rxresume.md) on *mechanism* — there is no in-repo LLM rewording step; tailoring (selecting, ordering, and rewording) happens manually in the rxresu.me editor. The *principle* below still holds: facts/metrics are never changed or broadened, the Bank is never mutated, and Michael is the honesty check (now exercised as he edits each CV Variant).
+
 When tailoring to a Job Listing, an LLM may produce a **Variant phrasing** of a selected Achievement — reworded and re-emphasised to mirror the listing's language. It works only from the Achievement's **canonical phrasing** (in the Bank) plus the job description.
 
 Hard constraints:

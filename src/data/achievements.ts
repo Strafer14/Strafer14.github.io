@@ -1,20 +1,19 @@
 // ─────────────────────────────────────────────────────────────────────────
-// THE ACHIEVEMENT BANK — single source of truth (see CONTEXT.md + docs/adr/)
+// THE ACHIEVEMENT BANK — the single source of truth (see CONTEXT.md + docs/adr/)
 //
-// Merged from three sources:
-//   • src/data/resume.ts                          → vetted canonical phrasings
-//   • src/data/past.md                            → raw facts for older roles
-//   • Obsidian "Career Timeline — Tastewise.md"   → authoritative Tastewise facts
+// This is the ONLY editable résumé data file. The old src/data/resume.ts has
+// been deleted; its facts are folded in here.
 //
-// Model (ADR-0001/0004): the website and every tailored CV Variant are *views*
-// over this Bank. Tailoring SELECTS + ORDERS achievements and may have an LLM
-// RE-WORD them at the output layer — but never changes facts/metrics and never
-// mutates this file (ADR-0003). `strength`/`core`/`tags` drive that selection.
+// Two views read from this Bank:
+//   • the website — src/pages/index.astro (via the derived exports below)
+//   • the CV       — src/pages/resume.json.ts emits JSON Resume for import into
+//                    rxresu.me (https://rxresu.me), where a CV Variant is tailored
+//                    per Job Listing in the editor and exported to PDF (ADR-0005).
 //
-// NOTE: this Bank is NOT yet wired into the site — index.astro/cv.astro still
-// import from resume.ts. Repointing them is the next agent's job (see
-// docs/cv-tailoring-plan.md). The derived `experience`/`profile`/etc. exports
-// at the bottom mirror resume.ts's API so that repoint is a one-line change.
+// Model (ADR-0001/0004): the facts/metrics here are canonical — never invent or
+// broaden them when tailoring (ADR-0003). `tags`/`strength` are metadata kept for
+// optional selection (see `selectAchievements`); the live site renders every
+// achievement per role in authored order.
 // ─────────────────────────────────────────────────────────────────────────
 
 // ── Vocabulary ──────────────────────────────────────────────────────────────
@@ -191,10 +190,9 @@ export const projects: Project[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────
-// DERIVED DEFAULT VIEW — mirrors resume.ts's API so the site can repoint with
-// a single import swap. The DEFAULT view shows every achievement per role in
-// authored order. Tailored Variants are produced by the (future) skill, which
-// filters/orders by tags + strength + core and may re-word via LLM.
+// DERIVED SITE VIEW — the shape src/pages/index.astro consumes. Shows every
+// achievement per role in authored order. (The CV view is produced separately:
+// src/pages/resume.json.ts → JSON Resume → rxresu.me, tailored in its editor.)
 // ─────────────────────────────────────────────────────────────────────────
 export const profile = identity;
 
@@ -210,10 +208,10 @@ export const experience = roles.map((r) => ({
   highlights: achievements.filter((a) => a.role === r.id).map((a) => a.text),
 }));
 
-/** Build a tailored selection of achievements for a set of target tags.
- *  Used by the future tailoring skill as a deterministic baseline (pre-LLM).
- *  Always includes `core`; otherwise any achievement whose tags intersect the
- *  target; ordered by strength desc. Does NOT re-word — that's the LLM step. */
+/** Optional helper: select achievements whose tags intersect `targetTags`,
+ *  ordered by strength desc. Not used by the live site (which shows all in
+ *  authored order); kept as a deterministic lever if a filtered JSON Resume
+ *  export is ever wanted. Tailoring otherwise happens in the rxresu.me editor. */
 export function selectAchievements(targetTags: Tag[]): Achievement[] {
   const want = new Set(targetTags);
   return achievements

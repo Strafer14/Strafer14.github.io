@@ -7,8 +7,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check",
-    "pdf": "node scripts/generate-pdf.mjs"
+    "check": "astro check"
   },
   "dependencies": {
     "@fontsource/archivo": "^5.1.0",
