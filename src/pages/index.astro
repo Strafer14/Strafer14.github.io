@@ -315,11 +315,10 @@ const nav = [
     width: clamp(116px, 17vw, 200px);
     height: clamp(116px, 17vw, 200px);
     object-fit: cover;
+    object-position: center 22%;
     border: var(--rule-ink);
-    filter: grayscale(1) contrast(1.04);
-    transition: filter 0.3s ease;
+    border-radius: 14px;
   }
-  .hero-photo img:hover { filter: none; }
   @media (max-width: 720px) {
     .hero { grid-template-columns: 1fr; align-items: start; }
     .hero-photo { order: -1; }
