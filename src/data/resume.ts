@@ -48,7 +48,7 @@ export const experience: Role[] = [
   {
     org: 'Tastewise',
     role: 'Director of Data Engineering & AI',
-    period: 'Jul 2023 – Aug 2026',
+    period: 'Jul 2023 - Aug 2026',
     current: true,
     progression: ['Tech Lead', 'Team Lead, Application', 'Data & AI Team Lead', 'Director of Data Engineering & AI'],
     summary:
@@ -66,7 +66,7 @@ export const experience: Role[] = [
   {
     org: 'Zencity',
     role: 'Full-Stack Team Leader',
-    period: 'Jun 2019 – Jul 2023',
+    period: 'Jun 2019 - Jul 2023',
     summary:
       'Started as a full-stack developer on the civic-engagement (B2G) product and moved up to lead the team.',
     highlights: [
@@ -78,7 +78,7 @@ export const experience: Role[] = [
   {
     org: 'Snipe',
     role: 'Co-Founder & VP R&D',
-    period: 'Jan 2017 – May 2019',
+    period: 'Jan 2017 - May 2019',
     summary:
       'Co-founded an esports startup and ran R&D alongside the CEO.',
     highlights: [
@@ -89,7 +89,7 @@ export const experience: Role[] = [
   {
     org: 'Israeli Military Intelligence — Unit 8200',
     role: 'Data Developer Team Leader',
-    period: 'Feb 2013 – Feb 2016',
+    period: 'Feb 2013 - Feb 2016',
     note: 'Israel’s elite SIGINT unit, the talent pipeline behind Check Point, Palo Alto Networks and Wiz.',
     summary:
       'Led a team of data developers and analysts on research and data-mining, and built the web tools senior decision-makers relied on.',
@@ -113,7 +113,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     title: 'Agentic LLM platform',
-    years: '2024 – 2026',
+    years: '2024 - 2026',
     blurb:
       'Built the company’s agent infrastructure: prompt-chain plus router, MCP tool servers, an OAuth gateway, Langfuse for observability. No framework, because I wanted to own every layer.',
     outcome: 'Runs the product’s AI features in production, with every model call traced.',
@@ -162,5 +162,5 @@ export const skills: SkillGroup[] = [
 export type Education = { qualification: string; org: string; period: string };
 
 export const education: Education[] = [
-  { qualification: 'B.A. Economics & Computer Science', org: 'The Open University of Israel', period: '2019 – 2025' },
+  { qualification: 'B.A. Economics & Computer Science', org: 'The Open University of Israel', period: '2019 - 2025' },
 ];
