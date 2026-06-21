@@ -8,7 +8,7 @@
 // ─────────────────────────────────────────────────────────────────────────
 import type { APIRoute } from 'astro';
 import {
-  identity, socials, about, roles, achievements, skills, education, projects,
+  identity, socials, about, roles, achievements, skills, education,
 } from '../data/achievements';
 
 // ── period strings → JSON Resume dates ("Jul 2023" → "2023-07", "2019" → "2019")
@@ -64,13 +64,9 @@ const resume = {
     };
   }),
   skills: skills.map((g) => ({ name: g.title, keywords: g.items })),
-  projects: projects.map((p) => ({
-    name: p.title,
-    description: p.blurb,
-    highlights: [p.outcome],
-    keywords: p.stack,
-    ...splitPeriod(p.years),
-  })),
+  // Projects are intentionally omitted from the CV: on a 2-page résumé they
+  // duplicate the Experience bullets (Agentic LLM platform, Databricks,
+  // Ingestion). The website keeps its "Selected work" section; the CV doesn't.
   meta: {
     canonical: abs('/resume.json'),
     note: 'Generated from src/data/achievements.ts (the Achievement Bank). Import into rxresu.me; tailor per Job Listing in the editor.',
