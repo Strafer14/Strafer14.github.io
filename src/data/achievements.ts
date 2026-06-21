@@ -51,7 +51,7 @@ export const identity = {
   subline: 'At Tastewise I built the first real data platform, then the agent stack on top of it. I tackle the hardest problems together with my team.',
   location: 'Tel Aviv, Israel',
   email: 'michael@strafer.dev',
-  photo: '/michael.png',
+  photo: '/michael.jpg',
   site: 'https://www.strafer.dev',
 };
 
