@@ -41,7 +41,6 @@ export type Achievement = {
   text: string;            // canonical phrasing (Google XYZ; honest, no invented numbers)
   tags: Tag[];
   strength: 1 | 2 | 3 | 4 | 5; // for ordering + trimming when a Variant runs long
-  core?: boolean;          // true → appears in every Variant regardless of tags
 };
 
 // ── Identity (FIXED in every Variant) ───────────────────────────────────────
@@ -49,9 +48,8 @@ export const identity = {
   name: 'Michael Ostrovsky',
   firstName: 'Michael',
   role: 'Director of Data Engineering & AI',
-  // Default headline/subline — the LLM may rewrite these per Job Listing.
   headline: 'I build the LLM and data platforms behind the product, and I’ve led the teams that own them.',
-  subline: 'At Tastewise I built the first real data platform, then the agent stack on top of it. I take the hardest problems and build them myself.',
+  subline: 'At Tastewise I built the first real data platform, then the agent stack on top of it. I tackle the hardest problems together with my team.',
   location: 'Tel Aviv, Israel',
   email: 'michael@strafer.dev',
   photo: '/michael.png',
@@ -115,17 +113,17 @@ export const roles: Role[] = [
 // strength/core are tunable defaults — adjust as you see real listings.
 export const achievements: Achievement[] = [
   // Tastewise
-  { id: 'tw-agent-stack', role: 'tastewise', tags: ['ai', 'backend'], strength: 5, core: true,
+  { id: 'tw-agent-stack', role: 'tastewise', tags: ['ai', 'backend'], strength: 5,
     text: 'Built the product’s agent stack from scratch: a prompt-chain and router orchestrating the model calls, without LangGraph or Mastra.' },
   { id: 'tw-streaming', role: 'tastewise', tags: ['ai', 'backend', 'frontend'], strength: 5,
     text: 'Took agent responses from a 90-second blank wait to real-time streaming, rebuilding the path so the UI showed partial results (and repaired half-formed JSON) as tokens arrived.' },
   { id: 'tw-ai-platform', role: 'tastewise', tags: ['ai', 'infra', 'backend'], strength: 4,
-    text: 'Stood up the AI-platform layer: MCP servers, an OAuth gateway, and a Slack agent that posts the daily data digest. Langfuse tracing took LLM debugging from hours to minutes.' },
-  { id: 'tw-databricks', role: 'tastewise', tags: ['data', 'infra'], strength: 5, core: true,
+    text: 'Stood up the AI-platform layer: MCP servers exposing the company’s data platform to agents, an OAuth AI gateway, and a Slack knowledge sharing agent owning the team’s llm wiki. Langfuse tracing took LLM debugging from hours to minutes.' },
+  { id: 'tw-databricks', role: 'tastewise', tags: ['data', 'infra'], strength: 5,
     text: 'Moved the data platform onto Databricks and Delta Lake over 292 commits, rewriting jobs that used to run for days into PySpark on Airflow, so they finish in hours instead.' },
   { id: 'tw-ingestion', role: 'tastewise', tags: ['data', 'infra', 'backend'], strength: 5,
     text: 'Built the ingestion behind 1M+ indexed places, unifying 10 mismatched collectors into one schema and orchestrating the jobs on Airflow with KubernetesPodOperators (EKS).' },
-  { id: 'tw-team', role: 'tastewise', tags: ['leadership'], strength: 4, core: true,
+  { id: 'tw-team', role: 'tastewise', tags: ['leadership'], strength: 4,
     text: 'Grew the team from 2 to 9 engineers across full-stack, data, AI and data science, built the interview process we still use, and took over the prior team’s ML pipelines with zero handover.' },
 
   // Zencity
@@ -219,6 +217,6 @@ export const experience = roles.map((r) => ({
 export function selectAchievements(targetTags: Tag[]): Achievement[] {
   const want = new Set(targetTags);
   return achievements
-    .filter((a) => a.core || a.tags.some((t) => want.has(t)))
+    .filter((a) => a.tags.some((t) => want.has(t)))
     .sort((a, b) => b.strength - a.strength);
 }
