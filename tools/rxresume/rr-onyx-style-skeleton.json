@@ -21,13 +21,13 @@
     "website": { "url": "", "label": "" },
     "customFields": []
   },
-  "summary": { "title": "", "icon": "article", "columns": 1, "hidden": false, "content": "" },
+  "summary": { "title": "Summary", "icon": "article", "columns": 1, "hidden": false, "content": "" },
   "sections": {
     "profiles": { "title": "", "icon": "messenger-logo", "columns": 1, "hidden": false, "items": [] },
-    "experience": { "title": "", "icon": "briefcase", "columns": 1, "hidden": false, "items": [] },
-    "education": { "title": "", "icon": "graduation-cap", "columns": 1, "hidden": false, "items": [] },
+    "experience": { "title": "Experience", "icon": "briefcase", "columns": 1, "hidden": false, "items": [] },
+    "education": { "title": "Education", "icon": "graduation-cap", "columns": 1, "hidden": false, "items": [] },
     "projects": { "title": "", "icon": "code-simple", "columns": 1, "hidden": true, "items": [] },
-    "skills": { "title": "", "icon": "compass-tool", "columns": 1, "hidden": false, "items": [] },
+    "skills": { "title": "Skills", "icon": "compass-tool", "columns": 1, "hidden": false, "items": [] },
     "languages": { "title": "", "icon": "translate", "columns": 1, "hidden": false, "items": [] },
     "interests": { "title": "", "icon": "football", "columns": 1, "hidden": false, "items": [] },
     "awards": { "title": "", "icon": "trophy", "columns": 1, "hidden": false, "items": [] },
@@ -51,9 +51,9 @@
     },
     "page": {
       "gapX": 3,
-      "gapY": 4,
-      "marginX": 11,
-      "marginY": 9,
+      "gapY": 3,
+      "marginX": 8,
+      "marginY": 7,
       "format": "a4",
       "locale": "en-US",
       "hideLinkUnderline": false,
@@ -69,8 +69,8 @@
       }
     },
     "typography": {
-      "body": { "fontFamily": "IBM Plex Serif", "fontWeights": ["400", "500"], "fontSize": 10, "lineHeight": 1.3 },
-      "heading": { "fontFamily": "IBM Plex Serif", "fontWeights": ["600"], "fontSize": 14, "lineHeight": 1.3 }
+      "body": { "fontFamily": "IBM Plex Serif", "fontWeights": ["400", "500"], "fontSize": 9.5, "lineHeight": 1.2 },
+      "heading": { "fontFamily": "IBM Plex Serif", "fontWeights": ["600"], "fontSize": 12, "lineHeight": 1.2 }
     },
     "notes": "",
     "styleRules": []
