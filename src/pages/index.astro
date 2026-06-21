@@ -310,7 +310,8 @@ const nav = [
   .btn:hover { border-color: var(--signal); color: var(--signal); }
   .btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .btn-primary:hover { background: var(--signal); border-color: var(--signal); color: var(--paper); }
-  .hero-photo { margin: 0; }
+  /* top-align the photo with the H1 (offset past the eyebrow line) */
+  .hero-photo { margin: 0; align-self: start; margin-top: 2.9rem; }
   .hero-photo img {
     width: clamp(116px, 17vw, 200px);
     height: clamp(116px, 17vw, 200px);
@@ -321,7 +322,7 @@ const nav = [
   }
   @media (max-width: 720px) {
     .hero { grid-template-columns: 1fr; align-items: start; }
-    .hero-photo { order: -1; }
+    .hero-photo { order: -1; margin-top: 0; align-self: auto; }
     .hero-photo img { width: 96px; height: 96px; }
   }
 
