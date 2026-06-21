@@ -24,7 +24,7 @@ Usage:
 Requires: the `claude` CLI on PATH (uses your existing Claude plan — no API key needed).
 """
 from __future__ import annotations
-import argparse, csv, io, json, subprocess, sys, urllib.request
+import argparse, asyncio, csv, io, json, sys, urllib.request
 from datetime import datetime
 from pathlib import Path
 
@@ -38,7 +38,8 @@ REPORT = HERE / "report.md"
 RANKED_CSV = HERE / "ranked.csv"
 
 DEFAULT_MODEL = "sonnet"
-BATCH = 30  # jobs per claude call
+BATCH = 30   # jobs per claude call
+WORKERS = 4  # max concurrent claude subprocesses (asyncio semaphore; each ~60s cold-start)
 
 # ── Location filter (deterministic — structured `city` column) ───────────────
 LOC_ALLOW = {
@@ -111,15 +112,21 @@ def prefilter(rows: list[dict]):
 
 
 # ── LLM scoring via local `claude` CLI ──────────────────────────────────────
-def claude_call(system: str, prompt: str, model: str) -> tuple[str, float]:
-    out = subprocess.run(
-        ["claude", "-p", prompt, "--output-format", "json", "--model", model,
-         "--append-system-prompt", system, "--disallowedTools", "*"],
-        capture_output=True, text=True, timeout=300,
+async def claude_call(system: str, prompt: str, model: str) -> tuple[str, float]:
+    proc = await asyncio.create_subprocess_exec(
+        "claude", "-p", prompt, "--output-format", "json", "--model", model,
+        "--append-system-prompt", system, "--disallowedTools", "*",
+        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
     )
-    if out.returncode != 0:
-        raise RuntimeError(f"claude exited {out.returncode}: {out.stderr[:400]}")
-    env = json.loads(out.stdout)
+    try:
+        out, err = await asyncio.wait_for(proc.communicate(), timeout=300)
+    except asyncio.TimeoutError:
+        proc.kill()
+        await proc.wait()
+        raise RuntimeError("claude timed out after 300s")
+    if proc.returncode != 0:
+        raise RuntimeError(f"claude exited {proc.returncode}: {err.decode()[:400]}")
+    env = json.loads(out.decode())
     return env.get("result", ""), float(env.get("total_cost_usd") or 0)
 
 
@@ -133,7 +140,7 @@ def parse_scores(text: str) -> list[dict]:
         return []
 
 
-def score_batch(batch: list[dict], system: str, model: str) -> tuple[dict, float]:
+async def score_batch(batch: list[dict], system: str, model: str) -> tuple[dict, float]:
     lines = [f"{n}. {r['title']} | {r['company']} ({r['category']}) | {r['level']} | "
              f"{r['city'] or 'unknown-city'}" for n, r in enumerate(batch, 1)]
     prompt = (
@@ -143,13 +150,41 @@ def score_batch(batch: list[dict], system: str, model: str) -> tuple[dict, float
         '[{"n": <line number>, "score": <int 0-100>, "reason": "<str>"}]\n\nJobs:\n'
         + "\n".join(lines)
     )
-    text, cost = claude_call(system, prompt, model)
+    text, cost = await claude_call(system, prompt, model)
     by_n = {s["n"]: s for s in parse_scores(text) if "n" in s}
     result = {}
     for n, r in enumerate(batch, 1):
         s = by_n.get(n, {})
         result[r["_id"]] = {"score": int(s.get("score", -1)), "reason": s.get("reason", "(unscored)")}
     return result, cost
+
+
+async def score_all(survivors: list[dict], system: str, model: str, workers: int):
+    """Score every batch with up to `workers` concurrent claude calls (asyncio + semaphore)."""
+    batches = [survivors[i:i + BATCH] for i in range(0, len(survivors), BATCH)]
+    sem = asyncio.Semaphore(workers)
+    scored, cost, done = [], 0.0, 0
+
+    async def run_batch(bi: int, batch: list[dict]):
+        async with sem:
+            try:
+                res, c = await score_batch(batch, system, model)
+            except Exception as e:
+                print(f"    ! batch {bi} failed ({e}); marking unscored", file=sys.stderr)
+                res, c = {r["_id"]: {"score": -1, "reason": "(batch error)"} for r in batch}, 0
+        return bi, batch, res, c
+
+    print(f"scoring {len(batches)} batches, {workers} at a time…", flush=True)
+    tasks = [asyncio.create_task(run_batch(bi, b)) for bi, b in enumerate(batches, 1)]
+    for fut in asyncio.as_completed(tasks):
+        bi, batch, res, c = await fut
+        cost += c
+        done += 1
+        print(f"  batch {bi} done ({done}/{len(batches)})", flush=True)
+        for r in batch:
+            r.update(res.get(r["_id"], {"score": -1, "reason": "(missing)"}))
+            scored.append(r)
+    return scored, cost
 
 
 # ── report ──────────────────────────────────────────────────────────────────
@@ -233,19 +268,7 @@ def cmd_rank(args):
         scored = survivors
     else:
         system = PROFILE.read_text(encoding="utf-8")
-        scored, cost = [], 0.0
-        batches = [survivors[i:i + BATCH] for i in range(0, len(survivors), BATCH)]
-        for bi, batch in enumerate(batches, 1):
-            print(f"  scoring batch {bi}/{len(batches)} ({len(batch)} jobs)…", flush=True)
-            try:
-                res, c = score_batch(batch, system, args.model)
-            except Exception as e:
-                print(f"    ! batch failed ({e}); marking unscored", file=sys.stderr)
-                res, c = {r["_id"]: {"score": -1, "reason": "(batch error)"} for r in batch}, 0
-            cost += c
-            for r in batch:
-                r.update(res.get(r["_id"], {"score": -1, "reason": "(missing)"}))
-                scored.append(r)
+        scored, cost = asyncio.run(score_all(survivors, system, args.model, args.workers))
         print(f"done. approx LLM cost ${cost:.2f}")
 
     write_report(scored, drops, len(applied_ids), new_ids, len(rows))
@@ -294,6 +317,7 @@ def main():
     p.add_argument("--no-llm", action="store_true", help="structured pre-filter only")
     p.add_argument("--limit", type=int, help="LLM-score only the first N survivors")
     p.add_argument("--model", default=DEFAULT_MODEL, help="claude model (default: sonnet)")
+    p.add_argument("--workers", type=int, default=WORKERS, help=f"concurrent claude calls (default: {WORKERS})")
 
     ma = sub.add_parser("mark-applied", help="record application(s) by URL or id")
     ma.add_argument("targets", nargs="+")
