@@ -1,3 +1,21 @@
-/node_modules/
+# build output
+dist/
+.astro/
 
+# dependencies
+node_modules/
+
+# os / editor
 .DS_Store
+*.log
+
+# env
+.env
+.env.production
+
+# self-hosted reactive-resume runtime data (tools/rxresume)
+tools/rxresume/data/
+
+# playwright screenshots
+.playwright-mcp/
+*-full.png

@@ -1,0 +1,158 @@
+/* ───────────────────────────────────────────────────────────────────────
+   Swiss Signal — design system
+   International Typographic Style: rigorous grid, grotesk type, one signal
+   accent, hairline rules, tabular figures, near-zero motion.
+   ─────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --paper: #fafaf7;        /* warm paper white  */
+  --ink: #111111;          /* near-black ink    */
+  --signal: #e63329;       /* international signal red — the only accent */
+  --gray: #6b6b66;         /* secondary text    */
+  --hairline: #e2e2dc;     /* 1px dividers      */
+  --ink-soft: #2a2a28;
+
+  --display: 'Archivo', system-ui, sans-serif;
+  --sans: 'Hanken Grotesk', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --maxw: 1180px;
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+  --rule: 1px solid var(--hairline);
+  --rule-ink: 1px solid var(--ink);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  font-size: clamp(15px, 0.55vw + 13.2px, 18px);
+  line-height: 1.55;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--signal); color: var(--paper); }
+
+img { display: block; max-width: 100%; }
+
+a { color: inherit; text-decoration: none; }
+
+/* numbers, labels, years — everything monospaced gets tabular figures so it
+   never jitters and snaps to a column */
+.mono,
+.num,
+time { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ── layout ─────────────────────────────────────────────────────────────── */
+.container {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section { padding-block: clamp(2.75rem, 6vw, 5.5rem); border-top: var(--rule); }
+
+/* Section header: number hung in the left margin, title beside it */
+.section-head {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0 1.5rem;
+  align-items: baseline;
+  margin-bottom: clamp(1.5rem, 3vw, 2.75rem);
+}
+.section-index {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--signal);
+  padding-top: 0.5rem;
+}
+.section-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  margin: 0;
+}
+.section-intro {
+  grid-column: 2;
+  max-width: 60ch;
+  margin: 0.75rem 0 0;
+  color: var(--gray);
+}
+
+/* content that should align under the title column on wide screens */
+.section-body { display: grid; grid-template-columns: 5.5rem 1fr; gap: 0 1.5rem; }
+.section-body > :first-child:not(.col-full) { grid-column: 2; }
+.col-full { grid-column: 1 / -1; }
+
+@media (max-width: 720px) {
+  .section-head,
+  .section-body { grid-template-columns: 1fr; gap: 0.4rem; }
+  .section-intro,
+  .section-body > :first-child:not(.col-full) { grid-column: 1; }
+  .section-index { padding-top: 0; }
+}
+
+/* ── links ──────────────────────────────────────────────────────────────── */
+.link {
+  border-bottom: 1px solid var(--hairline);
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+.link:hover,
+.link:focus-visible { color: var(--signal); border-color: var(--signal); }
+
+:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+
+/* ── reveal (restrained content fade on entry) ───────────────────────────
+   Gated behind `.js-reveal`, which is added by script only once JS runs — so
+   without JS (or for crawlers) all content is visible by default. */
+@media (prefers-reduced-motion: no-preference) {
+  .js-reveal [data-reveal] { opacity: 0; transform: translateY(10px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .js-reveal [data-reveal].is-in { opacity: 1; transform: none; }
+}
+
+/* ── utilities ────────────────────────────────────────────────────────────── */
+.todo {
+  position: relative;
+  outline: 1px dashed var(--signal);
+  outline-offset: 2px;
+}
+.todo::after {
+  content: 'TODO';
+  position: absolute;
+  top: -0.5rem;
+  right: -0.25rem;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: var(--signal);
+  background: var(--paper);
+  padding: 0 0.25rem;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}

@@ -1,0 +1,481 @@
+---
+import Base from '../layouts/Base.astro';
+import {
+  profile, socials, about, experience, projects, skills, education,
+} from '../data/achievements';
+
+const nav = [
+  { label: 'About', href: '#about' },
+  { label: 'Experience', href: '#experience' },
+  { label: 'Work', href: '#work' },
+  { label: 'Contact', href: '#contact' },
+];
+---
+
+<Base>
+  <!-- ── sticky header ─────────────────────────────────────────────────── -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="logo" href="#top">Michael Ostrovsky<span class="dash">—</span></a>
+      <nav aria-label="Sections">
+        <ul>
+          {nav.map((n, i) => (
+            <li>
+              <a href={n.href} data-navlink={n.href}>
+                <span class="num">{String(i + 1).padStart(2, '0')}</span> {n.label}
+              </a>
+            </li>
+          ))}
+          <li><a class="nav-cv" href="/cv.pdf">CV ↓</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top" class="container">
+    <!-- ── hero ────────────────────────────────────────────────────────── -->
+    <section class="hero" aria-label="Introduction">
+      <div class="hero-text">
+        <p class="eyebrow">{profile.role} — {profile.location}</p>
+        <h1>{profile.headline}</h1>
+        <p class="hero-sub">{profile.subline}</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#work">Selected work <span aria-hidden="true">→</span></a>
+          <a class="btn" href="/cv.pdf">Download CV <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+      <figure class="hero-photo">
+        <img src={profile.photo} width="200" height="200" alt={`Portrait of ${profile.name}`} />
+      </figure>
+    </section>
+
+    <!-- ── about ───────────────────────────────────────────────────────── -->
+    <section id="about" class="section">
+      <div class="section-head">
+        <span class="section-index">01 /</span>
+        <h2 class="section-title">About</h2>
+      </div>
+      <div class="section-body">
+        <div class="prose" data-reveal>
+          {about.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <!-- ── experience ──────────────────────────────────────────────────── -->
+    <section id="experience" class="section">
+      <div class="section-head">
+        <span class="section-index">02 /</span>
+        <h2 class="section-title">Experience</h2>
+        <p class="section-intro">Reverse-chronological. Every promotion came with a harder problem to own.</p>
+      </div>
+      <ol class="timeline">
+        {experience.map((r) => (
+          <li class="role" data-reveal>
+            <div class="role-when">
+              <time>{r.period}</time>
+              {r.current && <span class="now">Now</span>}
+            </div>
+            <div class="role-what">
+              <h3 class="role-title">{r.role}</h3>
+              <p class="role-org">{r.org}</p>
+              {r.progression && (
+                <p class="progression">
+                  {r.progression.map((step, i) => (
+                    <>
+                      <span>{step}</span>{i < r.progression!.length - 1 && <span class="arrow" aria-hidden="true"> → </span>}
+                    </>
+                  ))}
+                </p>
+              )}
+              <p class="role-summary">{r.summary}</p>
+              {r.note && <p class="role-note">{r.note}</p>}
+              <ul class="highlights">
+                {r.highlights.map((h) => <li>{h}</li>)}
+              </ul>
+              {r.stack && (
+                <ul class="tags" aria-label="Stack">
+                  {r.stack.map((t) => <li>{t}</li>)}
+                </ul>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- ── selected work ───────────────────────────────────────────────── -->
+    <section id="work" class="section">
+      <div class="section-head">
+        <span class="section-index">03 /</span>
+        <h2 class="section-title">Selected work</h2>
+        <p class="section-intro">Four things I built or led. Write-ups coming.</p>
+      </div>
+      <ol class="work">
+        {projects.map((p, i) => (
+          <li class="work-item" data-reveal>
+            <div class="work-row">
+              <span class="num work-n">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="work-title">{p.title}</h3>
+              <span class="num work-year">{p.years}</span>
+            </div>
+            <div class="work-detail">
+              <p class="work-blurb">{p.blurb}</p>
+              <p class="work-outcome"><span class="marker" aria-hidden="true">▸</span> {p.outcome}</p>
+              <ul class="tags">
+                {p.stack.map((t) => <li>{t}</li>)}
+                {p.writeup && <li class="tag-todo todo">write-up: soon</li>}
+              </ul>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- ── skills ──────────────────────────────────────────────────────── -->
+    <section id="skills" class="section">
+      <div class="section-head">
+        <span class="section-index">04 /</span>
+        <h2 class="section-title">Stack &amp; skills</h2>
+      </div>
+      <div class="skills">
+        {skills.map((g) => (
+          <div class="skill-group" data-reveal>
+            <h3 class="skill-title">{g.title}</h3>
+            <ul>{g.items.map((it) => <li>{it}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ── education ───────────────────────────────────────────────────── -->
+    <section id="education" class="section">
+      <div class="section-head">
+        <span class="section-index">05 /</span>
+        <h2 class="section-title">Education</h2>
+      </div>
+      <ul class="education">
+        {education.map((e) => (
+          <li class="edu-row" data-reveal>
+            <span class="edu-q">{e.qualification}</span>
+            <span class="edu-org">{e.org}</span>
+            <time class="edu-when">{e.period}</time>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- ── contact ─────────────────────────────────────────────────────── -->
+    <section id="contact" class="section">
+      <div class="section-head">
+        <span class="section-index">06 /</span>
+        <h2 class="section-title">Get in touch</h2>
+      </div>
+      <div class="section-body">
+        <div class="contact" data-reveal>
+          <a class="contact-email" href={`mailto:${profile.email}`}>{profile.email}</a>
+          <ul class="socials">
+            {socials.map((s) => (
+              <li>
+                <a class="link" href={s.href} target="_blank" rel="noopener noreferrer">
+                  {s.label} <span class="num handle">{s.handle}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a class="btn btn-primary" href="/cv.pdf">Download CV <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© {new Date().getFullYear()} {profile.name}</span>
+      <span class="footer-meta">International Typographic Style · built with Astro</span>
+    </div>
+  </footer>
+</Base>
+
+<script>
+  // Restrained progressive enhancement: reveal-on-enter + active nav link.
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (!mq.matches && 'IntersectionObserver' in window) {
+    // Only now (JS confirmed) hide the to-be-revealed elements, so no-JS shows all.
+    document.documentElement.classList.add('js-reveal');
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-in');
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { rootMargin: '0px 0px -10% 0px', threshold: 0.1 },
+    );
+    document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+  }
+
+  // Highlight the nav link for the section currently in view.
+  const links = new Map<string, Element>();
+  document.querySelectorAll('[data-navlink]').forEach((a) => {
+    links.set((a.getAttribute('data-navlink') || '').slice(1), a);
+  });
+  const spy = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          links.forEach((a) => a.classList.remove('active'));
+          links.get(e.target.id)?.classList.add('active');
+        }
+      }
+    },
+    { rootMargin: '-45% 0px -50% 0px' },
+  );
+  ['about', 'experience', 'work', 'contact'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) spy.observe(el);
+  });
+</script>
+
+<style>
+  /* ── sticky nav ───────────────────────────────────────────────────────── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--paper);
+    border-bottom: var(--rule);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 0.85rem;
+    gap: 1rem;
+  }
+  .logo {
+    font-family: var(--display);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    font-size: 0.98rem;
+    white-space: nowrap;
+  }
+  .logo .dash { color: var(--signal); margin-left: 0.35ch; }
+  .nav nav ul {
+    list-style: none;
+    display: flex;
+    gap: clamp(0.75rem, 2vw, 1.75rem);
+    margin: 0;
+    padding: 0;
+    align-items: center;
+  }
+  .nav nav a {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gray);
+    transition: color 0.18s ease;
+  }
+  .nav nav a .num { color: var(--signal); margin-right: 0.15ch; }
+  .nav nav a:hover,
+  .nav nav a.active { color: var(--ink); }
+  .nav-cv { color: var(--ink) !important; border-bottom: 1px solid var(--signal); padding-bottom: 1px; }
+  @media (max-width: 600px) {
+    .nav nav ul li:not(:last-child) { display: none; }
+  }
+
+  /* ── hero ─────────────────────────────────────────────────────────────── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: end;
+    padding-block: clamp(2.5rem, 7vw, 5rem) clamp(1.75rem, 4vw, 3rem);
+  }
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.9rem, 4.6vw, 3.4rem);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 0.75rem 0 0;
+    max-width: 18ch;
+    text-wrap: balance;
+  }
+  .hero-sub {
+    color: var(--gray);
+    max-width: 46ch;
+    margin: 1.1rem 0 0;
+    font-size: 1.02rem;
+  }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+  .btn {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+    padding: 0.6rem 1rem;
+    border: var(--rule-ink);
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  }
+  .btn:hover { border-color: var(--signal); color: var(--signal); }
+  .btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn-primary:hover { background: var(--signal); border-color: var(--signal); color: var(--paper); }
+  .hero-photo { margin: 0; }
+  .hero-photo img {
+    width: clamp(116px, 17vw, 200px);
+    height: clamp(116px, 17vw, 200px);
+    object-fit: cover;
+    border: var(--rule-ink);
+    filter: grayscale(1) contrast(1.04);
+    transition: filter 0.3s ease;
+  }
+  .hero-photo img:hover { filter: none; }
+  @media (max-width: 720px) {
+    .hero { grid-template-columns: 1fr; align-items: start; }
+    .hero-photo { order: -1; }
+    .hero-photo img { width: 96px; height: 96px; }
+  }
+
+  /* ── prose ────────────────────────────────────────────────────────────── */
+  .prose { max-width: 62ch; }
+  .prose p { margin: 0 0 0.9rem; font-size: 1.05rem; }
+  .prose p:last-child { margin-bottom: 0; }
+
+  /* ── timeline ─────────────────────────────────────────────────────────── */
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .role {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 0 1.5rem;
+    padding-block: clamp(1.5rem, 3vw, 2.25rem);
+    border-top: var(--rule);
+  }
+  .role:first-child { border-top: 0; padding-top: 0; }
+  .role-when { display: flex; flex-direction: column; gap: 0.4rem; padding-top: 0.2rem; }
+  .role-when time { font-size: 0.74rem; color: var(--gray); line-height: 1.3; }
+  .now {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--signal);
+    padding: 0.1rem 0.4rem;
+    width: max-content;
+  }
+  .role-title { font-family: var(--display); font-weight: 700; font-size: 1.25rem; margin: 0; letter-spacing: -0.01em; }
+  .role-org { margin: 0.15rem 0 0; font-weight: 500; }
+  .progression {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--gray);
+    margin: 0.6rem 0 0;
+    line-height: 1.6;
+  }
+  .progression .arrow { color: var(--signal); }
+  .role-summary { margin: 0.85rem 0 0; max-width: 64ch; }
+  .role-note { margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--gray); font-style: italic; max-width: 64ch; }
+  .highlights { margin: 1rem 0 0; padding: 0; list-style: none; max-width: 70ch; }
+  .highlights li { position: relative; padding-left: 1.25rem; margin-bottom: 0.55rem; }
+  .highlights li::before { content: '—'; position: absolute; left: 0; color: var(--signal); }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.1rem 0 0; padding: 0; list-style: none; }
+  .tags li {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+    color: var(--gray);
+    border: var(--rule);
+    padding: 0.18rem 0.5rem;
+  }
+  .tag-todo { color: var(--signal); border-color: var(--signal); }
+  @media (max-width: 720px) {
+    .role { grid-template-columns: 1fr; gap: 0.5rem; }
+    .role-when { flex-direction: row; align-items: center; }
+  }
+
+  /* ── selected work ────────────────────────────────────────────────────── */
+  .work { list-style: none; margin: 0; padding: 0; }
+  .work-item { padding-block: clamp(1.25rem, 2.5vw, 1.9rem); border-top: var(--rule); }
+  .work-item:first-child { border-top: 0; padding-top: 0; }
+  .work-row { display: grid; grid-template-columns: 2.5rem 1fr auto; gap: 0.75rem; align-items: baseline; }
+  .work-n { color: var(--signal); font-size: 0.85rem; }
+  .work-title { font-family: var(--display); font-weight: 700; font-size: clamp(1.2rem, 2.4vw, 1.6rem); margin: 0; letter-spacing: -0.015em; }
+  .work-year { color: var(--gray); font-size: 0.78rem; }
+  .work-detail { margin-top: 0.7rem; padding-left: 3.25rem; max-width: 72ch; }
+  .work-blurb { margin: 0; }
+  .work-outcome { margin: 0.6rem 0 0; font-weight: 500; }
+  .work-outcome .marker { color: var(--signal); }
+  @media (max-width: 600px) {
+    .work-detail { padding-left: 0; }
+  }
+
+  /* ── skills ───────────────────────────────────────────────────────────── */
+  .skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: clamp(1.25rem, 3vw, 2.5rem); }
+  .skill-title {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--signal);
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: var(--rule);
+  }
+  .skill-group ul { list-style: none; margin: 0; padding: 0; }
+  .skill-group li { padding: 0.22rem 0; font-size: 0.95rem; }
+
+  /* ── writing ──────────────────────────────────────────────────────────── */
+  .writing { max-width: 56ch; }
+  .writing p { margin: 0 0 0.85rem; }
+  .writing.todo { padding: 1.25rem 1.5rem; }
+
+  /* ── education ────────────────────────────────────────────────────────── */
+  .education { list-style: none; margin: 0; padding: 0; }
+  .edu-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr auto;
+    gap: 1rem;
+    align-items: baseline;
+    padding-block: 1rem;
+    border-top: var(--rule);
+  }
+  .edu-row:first-child { border-top: 0; padding-top: 0; }
+  .edu-q { font-weight: 500; }
+  .edu-org { color: var(--gray); }
+  .edu-when { color: var(--gray); font-size: 0.8rem; text-align: right; }
+  @media (max-width: 600px) {
+    .edu-row { grid-template-columns: 1fr; gap: 0.2rem; }
+    .edu-when { text-align: left; }
+  }
+
+  /* ── contact ──────────────────────────────────────────────────────────── */
+  .contact { display: flex; flex-direction: column; align-items: flex-start; gap: 1.4rem; }
+  .contact-email {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 5vw, 3rem);
+    letter-spacing: -0.025em;
+    border-bottom: 2px solid var(--hairline);
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .contact-email:hover { color: var(--signal); border-color: var(--signal); }
+  .socials { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; }
+  .socials .handle { color: var(--gray); margin-left: 0.4ch; font-size: 0.85em; }
+
+  /* ── footer ───────────────────────────────────────────────────────────── */
+  .footer { border-top: var(--rule-ink); margin-top: clamp(2rem, 5vw, 4rem); }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-block: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--gray);
+  }
+</style>
