@@ -4,6 +4,7 @@ software.csv
 applied.json
 seen.json
 scores.json
+audit-baseline.json
 report.md
 ranked.csv
 __pycache__/
