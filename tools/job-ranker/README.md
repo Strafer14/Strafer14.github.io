@@ -11,11 +11,18 @@ fit your profile, and ranks them with an LLM (via the local `claude` CLI — no 
 ## Run
 ```bash
 cd tools/job-ranker
-python3 rank.py                  # fetch → filter → dedupe applied → LLM rank → report.md + ranked.csv
-python3 rank.py --no-llm         # just the deterministic pre-filter (instant, free) — sanity check
-python3 rank.py --limit 40       # LLM-score only the first 40 survivors (fast/cheap test)
-python3 rank.py --model haiku    # cheaper/faster model (default: sonnet)
+python3 rank.py                  # incremental: fetch → filter → dedupe → score ONLY new/changed → report
+python3 rank.py --new-only       # report just the jobs new since the last run (the daily diff)
+python3 rank.py --rescore        # ignore the cache; re-score everything from scratch
+python3 rank.py --no-llm         # deterministic pre-filter only (instant, free) — sanity check
+python3 rank.py --limit 40       # cap to first N survivors (testing); --model/--workers also available
 ```
+
+## Daily use (only pays for the diff)
+The CSV refreshes daily. A normal `python3 rank.py` only sends **new or changed** postings to the LLM —
+everything already scored is reused from `scores.json`. Re-running with no new jobs costs **nothing**
+(`nothing new to score — all from cache`). Use `--new-only` for a "what's new today" digest, or
+`--rescore` to rebuild the whole board (e.g. after editing `profile.md`).
 
 ## Mark jobs you've applied to (so they never resurface)
 ```bash
@@ -29,7 +36,11 @@ Jobs in `applied.json` are excluded from every future run.
 1. **Pre-filter — structured fields only (deterministic, free):** drops `level == Student` and
    anything whose `city` isn't in the location allowlist (set at the top of `rank.py`). These are
    exact set-membership checks on structured columns — no language understanding, so no LLM.
-2. **Dedupe:** removes everything already in `applied.json`.
+2. **Dedupe (two layers, both keyed on the URL minus its `?utm_…` query — a stable per-posting id):**
+   *(a)* removes everything in `applied.json` (jobs you've applied to — gone for good, before any LLM call);
+   *(b)* skips anything already in the `scores.json` cache whose `updated` date hasn't moved, so only
+   new/changed postings are scored. Failure modes all fall "safe" — at worst a repost under a new URL is
+   re-scored, never a job silently hidden.
 3. **LLM rank:** scores survivors 0–100 against `profile.md`, batched through `claude`.
    The profile carries the calibration anchors (e.g. a hands-on Tech Lead at a target company ≈ 90;
    a pure-management Director ≈ 60), the company-type nuance (boost the kinds of companies you want
@@ -47,5 +58,6 @@ Edit **`profile.md`** (your private copy) — it's the whole rubric (strengths, 
 anchors, exclusions). The location allowlist lives at the top of **`rank.py`**.
 
 ## State files (gitignored — personal, never committed to this public repo)
-`profile.md` (your rubric) · `applied.json` · `seen.json` (powers the 🆕 "new since last run" marker) ·
-`software.csv` (cache) · `report.md` · `ranked.csv`.
+`profile.md` (your rubric) · `applied.json` (dedup: applied jobs) ·
+`scores.json` (score cache → incremental runs + 🆕 markers) · `software.csv` (cache) ·
+`report.md` · `ranked.csv`.

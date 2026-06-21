@@ -11,13 +11,15 @@ reason, so they're visible/auditable instead of silently regex-dropped.
 
 State is persistent across runs:
   - applied.json : jobs already applied to → excluded from every future ranking
-  - seen.json    : job ids seen on a prior run → new postings get a 🆕 marker
+  - scores.json  : cache of id → score/reason; only new or `updated`-changed postings are
+                   re-scored each run, and never-before-seen ids get a 🆕 marker
 
 Usage:
-  python3 rank.py                       # full run: fetch → filter → dedupe → LLM rank → report
+  python3 rank.py                       # incremental run: score ONLY new/changed postings, reuse the cache
+  python3 rank.py --new-only            # report just the jobs new since the last run (the daily diff)
+  python3 rank.py --rescore             # ignore the cache; re-score every job
   python3 rank.py --no-llm              # structured pre-filter only (instant, free) — for testing
-  python3 rank.py --limit 40            # only LLM-score the top N survivors (testing)
-  python3 rank.py --model haiku         # override the model (default: sonnet)
+  python3 rank.py --limit 40            # cap to first N survivors (testing); --model/--workers available
   python3 rank.py mark-applied <url>... # record application(s); accepts apply URLs or job ids
   python3 rank.py applied               # list everything marked applied
 
@@ -32,7 +34,7 @@ HERE = Path(__file__).resolve().parent
 CSV_URL = "https://raw.githack.com/mluggy/techmap/main/jobs/software.csv"
 CSV_CACHE = HERE / "software.csv"
 APPLIED = HERE / "applied.json"
-SEEN = HERE / "seen.json"
+SCORES = HERE / "scores.json"   # id -> {score, reason, updated, scored_at}; powers incremental runs
 PROFILE = HERE / "profile.md"
 REPORT = HERE / "report.md"
 RANKED_CSV = HERE / "ranked.csv"
@@ -256,8 +258,8 @@ def cmd_rank(args):
     survivors = [r for r in survivors if r["_id"] not in applied_ids]
     print(f"after removing {len(applied_ids)} applied: {len(survivors)} to rank")
 
-    seen = set(load_json(SEEN, []))
-    new_ids = {r["_id"] for r in survivors} - seen
+    cache = load_json(SCORES, {})                         # persistent score cache
+    new_ids = {r["_id"] for r in survivors} - set(cache)  # never-seen-before postings → 🆕
 
     if args.limit:
         survivors = survivors[:args.limit]
@@ -267,12 +269,33 @@ def cmd_rank(args):
             r["score"], r["reason"] = 0, "(--no-llm: not scored)"
         scored = survivors
     else:
-        system = PROFILE.read_text(encoding="utf-8")
-        scored, cost = asyncio.run(score_all(survivors, system, args.model, args.workers))
-        print(f"done. approx LLM cost ${cost:.2f}")
+        # Incremental: only call the LLM for jobs not in the cache, or whose `updated` date moved.
+        def stale(r):
+            c = cache.get(r["_id"])
+            return c is None or c.get("updated") != r.get("updated")
+        need = survivors if args.rescore else [r for r in survivors if stale(r)]
+        print(f"{len(survivors)} to rank — {len(survivors) - len(need)} from cache, "
+              f"{len(need)} to score{' (forced --rescore)' if args.rescore else ''}")
+        if need:
+            system = PROFILE.read_text(encoding="utf-8")
+            _, cost = asyncio.run(score_all(need, system, args.model, args.workers))  # sets score/reason in place
+            today = f"{datetime.now():%Y-%m-%d}"
+            for r in need:
+                cache[r["_id"]] = {"score": r["score"], "reason": r["reason"],
+                                   "updated": r.get("updated"), "scored_at": today}
+            save_json(SCORES, cache)
+            print(f"done. approx LLM cost ${cost:.2f}")
+        else:
+            print("nothing new to score — all from cache (no LLM cost)")
+        need_ids = {r["_id"] for r in need}
+        for r in survivors:                               # fill cached scores onto the rest
+            if r["_id"] not in need_ids:
+                c = cache.get(r["_id"], {"score": -1, "reason": "(uncached)"})
+                r["score"], r["reason"] = c["score"], c["reason"]
+        scored = survivors
 
-    write_report(scored, drops, len(applied_ids), new_ids, len(rows))
-    save_json(SEEN, sorted(seen | {r["_id"] for r in survivors}))
+    report_rows = [r for r in scored if r["_id"] in new_ids] if args.new_only else scored
+    write_report(report_rows, drops, len(applied_ids), new_ids, len(rows))
     top = sorted([r for r in scored if r["score"] > 0], key=lambda r: -r["score"])[:10]
     print(f"\nwrote {REPORT.name} and {RANKED_CSV.name}. Top 10:")
     for r in top:
@@ -318,6 +341,8 @@ def main():
     p.add_argument("--limit", type=int, help="LLM-score only the first N survivors")
     p.add_argument("--model", default=DEFAULT_MODEL, help="claude model (default: sonnet)")
     p.add_argument("--workers", type=int, default=WORKERS, help=f"concurrent claude calls (default: {WORKERS})")
+    p.add_argument("--rescore", action="store_true", help="ignore the score cache; re-score every job")
+    p.add_argument("--new-only", action="store_true", help="report only jobs new since the last run (the daily diff)")
 
     ma = sub.add_parser("mark-applied", help="record application(s) by URL or id")
     ma.add_argument("targets", nargs="+")
