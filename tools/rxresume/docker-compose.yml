@@ -1,0 +1,42 @@
+# Self-hosted Reactive Resume (rxresu.me) — local, single-user, private.
+#
+# The public rxresu.me instance has signups disabled, so we run it ourselves.
+# As of v5.1.0 this is just two containers (PDF export is client-side — no
+# Chromium/Minio needed). Data stays on this machine.
+#
+#   cd tools/rxresume
+#   docker compose up -d         # start (first run pulls images + migrates DB)
+#   open http://localhost:3000   # sign up (first account), then import resume.json
+#   docker compose down          # stop when you're done tailoring
+#
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  reactive-resume:
+    image: amruthpillai/reactive-resume:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
