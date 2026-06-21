@@ -16,6 +16,9 @@ node_modules/
 # self-hosted reactive-resume runtime data (tools/rxresume)
 tools/rxresume/data/
 
+# tailored CV variants (per-application artifacts — private, not for the public repo)
+variants/
+
 # playwright screenshots
 .playwright-mcp/
 *-full.png
