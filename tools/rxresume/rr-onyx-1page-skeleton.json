@@ -1,5 +1,5 @@
 {
-  "_comment": "Look-only onyx skeleton for Reactive Resume. Holds metadata/layout/typography ONLY — no resume content (that comes from the Bank via build-variant.mjs), so nothing here duplicates achievements.ts.",
+  "_comment": "1-page onyx skeleton: photo hidden, tighter type/margins. Pair with an aggressively trimmed spec (strongest bullets only) — see SKILL.md '1-page mode'. Look-only; no resume content.",
   "picture": {
     "hidden": true,
     "url": "",
@@ -40,20 +40,20 @@
   "metadata": {
     "template": "onyx",
     "layout": {
-      "sidebarWidth": 35,
+      "sidebarWidth": 32,
       "pages": [
         {
           "fullWidth": false,
-          "main": ["profiles", "summary", "education", "experience", "projects", "volunteer", "references"],
-          "sidebar": ["skills", "certifications", "awards", "languages", "interests", "publications"]
+          "main": ["summary", "experience", "education", "projects", "volunteer", "references"],
+          "sidebar": ["profiles", "skills", "certifications", "awards", "languages", "interests", "publications"]
         }
       ]
     },
     "page": {
       "gapX": 3,
-      "gapY": 4,
-      "marginX": 11,
-      "marginY": 9,
+      "gapY": 3,
+      "marginX": 9,
+      "marginY": 8,
       "format": "a4",
       "locale": "en-US",
       "hideLinkUnderline": false,
@@ -69,8 +69,8 @@
       }
     },
     "typography": {
-      "body": { "fontFamily": "IBM Plex Serif", "fontWeights": ["400", "500"], "fontSize": 10, "lineHeight": 1.3 },
-      "heading": { "fontFamily": "IBM Plex Serif", "fontWeights": ["600"], "fontSize": 14, "lineHeight": 1.3 }
+      "body": { "fontFamily": "IBM Plex Serif", "fontWeights": ["400", "500"], "fontSize": 9, "lineHeight": 1.2 },
+      "heading": { "fontFamily": "IBM Plex Serif", "fontWeights": ["600"], "fontSize": 11, "lineHeight": 1.2 }
     },
     "notes": "",
     "styleRules": []

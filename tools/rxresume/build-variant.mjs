@@ -34,14 +34,16 @@ import { dirname, resolve } from "node:path";
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "..", "..");
 
-const [, , outPath, specPath] = process.argv;
+const [, , outPath, specPath, skeletonArg] = process.argv;
 if (!outPath) {
-  console.error("usage: build-variant.mjs <out.json> [spec.json]");
+  console.error("usage: build-variant.mjs <out.json> [spec.json] [skeleton.json]");
+  console.error("  skeleton defaults to rr-onyx-style-skeleton.json (2-page); pass rr-onyx-1page-skeleton.json for a 1-pager");
   process.exit(1);
 }
 
 const jr = JSON.parse(readFileSync(resolve(repoRoot, "dist", "resume.json"), "utf8"));
-const skeleton = JSON.parse(readFileSync(resolve(here, "rr-onyx-style-skeleton.json"), "utf8"));
+const skeleton = JSON.parse(readFileSync(
+  skeletonArg ? resolve(process.cwd(), skeletonArg) : resolve(here, "rr-onyx-style-skeleton.json"), "utf8"));
 const spec = specPath ? JSON.parse(readFileSync(resolve(process.cwd(), specPath), "utf8")) : {};
 
 const PHOTO = jr.basics?.image || "https://www.strafer.dev/michael.jpg";

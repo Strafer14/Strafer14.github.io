@@ -64,9 +64,16 @@ pdftotext "$F.pdf" - | grep -ciw <must-have-keyword>
 # housekeeping:  list = GET $B/resumes   |   delete = curl -X DELETE "$B/resumes/$ID" -H "x-api-key: $KEY"
 ```
 
+## Page count
+A **dense 2-pager is fine** — don't sacrifice real content to force one page. The bar: it must be genuinely dense **and break cleanly** (e.g. page 2 carrying only the skills sidebar overflow). Avoid a near-empty second page or a single stray line — if that happens, tighten spacing or drop the weakest bullet so it either fills page 2 or collapses to one. Verify with `pdfinfo <out>.pdf | grep Pages` and check where the break lands (`pdftotext -f 2 -l 2 <out>.pdf -`).
+
+**1-page variant (optional)** — when a role or strict ATS specifically wants one page, build an aggressively trimmed CV (genuinely more selective, not just smaller type):
+- Pass the tight skeleton as the **3rd arg**: `node tools/rxresume/build-variant.mjs <out>.resumedata.json <spec>.json tools/rxresume/rr-onyx-1page-skeleton.json` (photo hidden, 9pt / 1.2 line-height, 9/8mm margins, profiles+skills in the sidebar).
+- In the spec: a 1-line summary; only the **strongest bullets** (≈4 for the current role, ~1 each for older roles); omit per-role summaries; ~4 skill groups. Same honesty rules.
+
 ## Notes
 - `variants/` is gitignored (per-application artifacts — private, not for the public repo).
 - Each import creates a resume in RR. Reuse one per company or delete stale ones (`DELETE $B/resumes/{id}`).
-- Photo: the skeleton points `picture.url` at the live `https://www.strafer.dev/michael.png`; RR fetches it when rendering the PDF.
+- Photo: **hidden by default** in both skeletons (CV-reviewer preference). To show it, set `picture.hidden: false`; the converter fills `picture.url` from the Bank (`https://www.strafer.dev/michael.jpg`), which RR fetches when rendering.
 - RR's own AI scorecard (`/ai/analyze-resume`) is optional (needs `ENCRYPTION_SECRET` + a provider key in RR). Don't rely on it — do the ATS keyword check yourself in step 9.
 - The converter & skeleton live in `tools/rxresume/` (`build-variant.mjs`, `rr-onyx-style-skeleton.json`).
