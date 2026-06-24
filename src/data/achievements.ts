@@ -112,12 +112,16 @@ export const roles: Role[] = [
 // strength/core are tunable defaults — adjust as you see real listings.
 export const achievements: Achievement[] = [
   // Tastewise
-  { id: 'tw-agent-stack', role: 'tastewise', tags: ['ai', 'backend'], strength: 5,
-    text: 'Built the product’s agent stack from scratch: a prompt-chain and router orchestrating the model calls, without LangGraph or Mastra.' },
+  { id: 'tw-llm-pipeline', role: 'tastewise', tags: ['ai', 'backend'], strength: 5,
+    text: 'Built and have owned the LLM pipeline behind the product’s AI features since 2023 — pull data from Elasticsearch, ground a versioned prompt in it, call the model, and turn the result into imagery with genai — with runtime JSON-schema validation that feeds errors back to the model for automatic repair, back when getting valid JSON out of an LLM was still hard.' },
   { id: 'tw-streaming', role: 'tastewise', tags: ['ai', 'backend', 'frontend'], strength: 5,
-    text: 'Took agent responses from a 90-second blank wait to real-time streaming, rebuilding the path so the UI showed partial results (and repaired half-formed JSON) as tokens arrived.' },
+    text: 'Cut the wait from a ~90-second blank screen to answers that appear as they generate: moved the LLM path onto WebSocket token streaming with optimistic partial-JSON parsing, so the UI renders partial results instead of holding for the full response.' },
+  { id: 'tw-router', role: 'tastewise', tags: ['ai', 'backend'], strength: 4,
+    text: 'Added an LLM router that classifies each request and routes it to the right flow, chained dependent calls, and built the operational scaffolding around them — PromptLayer for prompt versioning (which I evaluated and introduced; still in use) and Langfuse for tracing the chains.' },
   { id: 'tw-ai-platform', role: 'tastewise', tags: ['ai', 'infra', 'backend'], strength: 4,
-    text: 'Stood up the AI-platform layer: MCP servers exposing the company’s data platform to agents, an OAuth AI gateway, and a Slack knowledge sharing agent owning the team’s llm wiki. Langfuse tracing took LLM debugging from hours to minutes.' },
+    text: 'Stood up internal AI-platform infrastructure: MCP servers exposing the company’s data platform to agents, an OAuth2 AI gateway that mints per-user tokens, and a Slack knowledge-sharing agent owning the team’s LLM wiki.' },
+  { id: 'tw-lovable', role: 'tastewise', tags: ['ai', 'leadership', 'frontend'], strength: 5,
+    text: 'Led an internal platform that lets anyone at the company build sub-apps inside the product — no R&D deployment or security burden: gave the Lovable coding agent governed access to Tastewise through an MCP layer my AI engineers and I built, exposing progressive-disclosure API tools (BM25 over our OpenAPI), the design-system Storybook I started in 2023, and PromptLayer — all behind OAuth2 through our AI gateway.' },
   { id: 'tw-claude-code', role: 'tastewise', tags: ['ai', 'leadership'], strength: 4,
     text: 'Introduced Claude Code to R&D in July 2025 and drove its adoption — within a couple of months the whole org was building with it — then led the build of an internal Claude Code plugin packaging the company’s shared skills and MCP servers.' },
   { id: 'tw-databricks', role: 'tastewise', tags: ['data', 'infra'], strength: 5,
@@ -167,7 +171,7 @@ export const achievements: Achievement[] = [
 // ── Skills (tagged so a Variant can reorder/trim to a role) ──────────────────
 export type SkillGroup = { title: string; items: string[]; tags: Tag[] };
 export const skills: SkillGroup[] = [
-  { title: 'AI & LLM Engineering', tags: ['ai'], items: ['Agentic workflows (prompt-chain + router)', 'RAG & retrieval', 'MCP servers & gateways', 'Langfuse evals & observability', 'Model routing', 'Token streaming'] },
+  { title: 'AI & LLM Engineering', tags: ['ai'], items: ['LLM orchestration (chaining + routing)', 'Retrieval-augmented prompting', 'MCP servers & gateways', 'Langfuse evals & observability', 'Structured-output validation & repair', 'Token streaming'] },
   { title: 'Data Engineering', tags: ['data'], items: ['Databricks', 'Delta Lake', 'PySpark / Spark', 'Airflow (AWS MWAA)', 'Kinesis / Firehose', 'Kafka (CDC)', 'Pydantic', 'Elasticsearch', 'MongoDB', 'S3'] },
   { title: 'Cloud & Infra', tags: ['infra'], items: ['AWS', 'Kubernetes (EKS)', 'KubernetesPodOperators', 'Lambda', 'Datadog (APM/RUM)', 'Terraform'] },
   { title: 'Languages & Backend', tags: ['backend'], items: ['Python', 'TypeScript', 'Node.js', 'FastAPI', 'Flask', 'NestJS', 'Microservices', 'Auth & SSO (Passport.js, OAuth/JWT)'] },
@@ -187,10 +191,10 @@ export const education: Education[] = [
 // current site keeps rendering unchanged.
 export type Project = { title: string; years: string; blurb: string; outcome: string; stack: string[] };
 export const projects: Project[] = [
-  { title: 'Agentic LLM platform', years: '2024 - 2026',
-    blurb: 'Built the company’s agent infrastructure: prompt-chain plus router, MCP tool servers, an OAuth gateway, Langfuse for observability. No framework, because I wanted to own every layer.',
-    outcome: 'Runs the product’s AI features in production, with every model call traced.',
-    stack: ['Python', 'FastAPI', 'MCP', 'Langfuse', 'WebSockets'] },
+  { title: 'Product LLM pipeline', years: '2023 - 2026',
+    blurb: 'The LLM layer behind the product’s AI features: pull data from Elasticsearch, ground a versioned prompt in it, call the model, and validate-and-repair the JSON. An LLM router picks the flow; responses stream back token-by-token with partial-JSON parsing; chained calls are traced in Langfuse.',
+    outcome: 'Runs the product’s AI features in production — fast first paint via streaming, every chain traced.',
+    stack: ['Python', 'FastAPI', 'WebSockets', 'PromptLayer', 'Langfuse'] },
   { title: 'Databricks lakehouse migration', years: '2025',
     blurb: 'Led the move off scattered scripts that ran for days onto a Databricks and Delta Lake lakehouse: bronze/silver/gold layers, Asset Bundles, parameterized Spark jobs, multi-country fan-out.',
     outcome: 'About 10× faster, shipped incrementally over 292 commits.',
@@ -199,10 +203,10 @@ export const projects: Project[] = [
     blurb: 'Moved batch jobs off the ad-hoc EC2 scripts a human used to babysit onto orchestrated, containerized workloads, streaming through Kinesis, Firehose and a Lambda with Pydantic guarding against upstream schema changes.',
     outcome: '1M+ restaurants & venues matched and indexed, holding steady as upstream sources kept changing shape.',
     stack: ['Kinesis', 'Firehose', 'Lambda', 'Pydantic', 'Kubernetes', 'Airflow'] },
-  { title: 'Observability overhaul', years: '2023',
-    blurb: 'Moved the platform from Logz.io to Datadog and wrote a custom Node.js & Python logger that every service uses.',
-    outcome: 'Following a request went from grepping scattered logs to a single Datadog query.',
-    stack: ['Datadog', 'Node.js', 'TypeScript'] },
+  { title: 'Self-service app builder (Lovable + MCP)', years: '2026',
+    blurb: 'An internal platform letting any employee build sub-apps inside the product. Gave the Lovable coding agent governed access to Tastewise via a custom MCP layer: progressive-disclosure API tools (BM25 over our OpenAPI), the design-system Storybook, and PromptLayer — behind OAuth2 through an AI gateway we built.',
+    outcome: 'Employees ship realistic apps on the company design system and data, with no R&D deployment or security overhead.',
+    stack: ['MCP', 'Lovable', 'BM25', 'OAuth2', 'Storybook'] },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────
