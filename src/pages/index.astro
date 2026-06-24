@@ -95,7 +95,7 @@ const nav = [
       <div class="section-head">
         <span class="section-index">02 /</span>
         <h2 class="section-title">Selected work</h2>
-        <p class="section-intro">Four things I built or led. Write-ups coming.</p>
+        <p class="section-intro">Four things I built or led.</p>
       </div>
       <ol class="work">
         {projects.map((p, i) => (
@@ -110,7 +110,6 @@ const nav = [
               <p class="work-outcome"><span class="marker" aria-hidden="true">▸</span> {p.outcome}</p>
               <ul class="tags">
                 {p.stack.map((t) => <li>{t}</li>)}
-                {p.writeup && <li class="tag-todo todo">write-up: soon</li>}
               </ul>
             </div>
           </li>
@@ -377,7 +376,6 @@ const nav = [
     border: var(--rule);
     padding: 0.18rem 0.5rem;
   }
-  .tag-todo { color: var(--signal); border-color: var(--signal); }
   @media (max-width: 720px) {
     .role { grid-template-columns: 1fr; gap: 0.5rem; }
     .role-when { flex-direction: row; align-items: center; }

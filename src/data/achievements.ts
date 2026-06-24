@@ -118,6 +118,8 @@ export const achievements: Achievement[] = [
     text: 'Took agent responses from a 90-second blank wait to real-time streaming, rebuilding the path so the UI showed partial results (and repaired half-formed JSON) as tokens arrived.' },
   { id: 'tw-ai-platform', role: 'tastewise', tags: ['ai', 'infra', 'backend'], strength: 4,
     text: 'Stood up the AI-platform layer: MCP servers exposing the company’s data platform to agents, an OAuth AI gateway, and a Slack knowledge sharing agent owning the team’s llm wiki. Langfuse tracing took LLM debugging from hours to minutes.' },
+  { id: 'tw-claude-code', role: 'tastewise', tags: ['ai', 'leadership'], strength: 4,
+    text: 'Introduced Claude Code to R&D in July 2025 and drove its adoption — within a couple of months the whole org was building with it — then led the build of an internal Claude Code plugin packaging the company’s shared skills and MCP servers.' },
   { id: 'tw-databricks', role: 'tastewise', tags: ['data', 'infra'], strength: 5,
     text: 'Moved the data platform onto Databricks and Delta Lake over 292 commits, rewriting jobs that used to run for days into PySpark on Airflow, so they finish in hours instead.' },
   { id: 'tw-ingestion', role: 'tastewise', tags: ['data', 'infra', 'backend'], strength: 5,
@@ -166,7 +168,7 @@ export const achievements: Achievement[] = [
 export type SkillGroup = { title: string; items: string[]; tags: Tag[] };
 export const skills: SkillGroup[] = [
   { title: 'AI & LLM Engineering', tags: ['ai'], items: ['Agentic workflows (prompt-chain + router)', 'RAG & retrieval', 'MCP servers & gateways', 'Langfuse evals & observability', 'Model routing', 'Token streaming'] },
-  { title: 'Data Engineering', tags: ['data'], items: ['Databricks', 'Delta Lake', 'PySpark / Spark', 'Airflow (Astronomer)', 'Kinesis / Firehose', 'Kafka (CDC)', 'Pydantic', 'Elasticsearch', 'MongoDB', 'S3'] },
+  { title: 'Data Engineering', tags: ['data'], items: ['Databricks', 'Delta Lake', 'PySpark / Spark', 'Airflow (AWS MWAA)', 'Kinesis / Firehose', 'Kafka (CDC)', 'Pydantic', 'Elasticsearch', 'MongoDB', 'S3'] },
   { title: 'Cloud & Infra', tags: ['infra'], items: ['AWS', 'Kubernetes (EKS)', 'KubernetesPodOperators', 'Lambda', 'Datadog (APM/RUM)', 'Terraform'] },
   { title: 'Languages & Backend', tags: ['backend'], items: ['Python', 'TypeScript', 'Node.js', 'FastAPI', 'Flask', 'NestJS', 'Microservices', 'Auth & SSO (Passport.js, OAuth/JWT)'] },
   { title: 'Frontend', tags: ['frontend'], items: ['React', 'React Native', 'Svelte', 'TypeScript', 'SCSS', 'Microfrontends (Module Federation)', 'Framework migration (Angular → React)'] },
@@ -183,17 +185,17 @@ export const education: Education[] = [
 // NOTE: these overlap with achievements (minor ADR-0001 duplication). The next
 // agent may want to derive them from achievement ids instead. Kept as-is so the
 // current site keeps rendering unchanged.
-export type Project = { title: string; years: string; blurb: string; outcome: string; stack: string[]; writeup?: boolean };
+export type Project = { title: string; years: string; blurb: string; outcome: string; stack: string[] };
 export const projects: Project[] = [
-  { title: 'Agentic LLM platform', years: '2024 - 2026', writeup: true,
+  { title: 'Agentic LLM platform', years: '2024 - 2026',
     blurb: 'Built the company’s agent infrastructure: prompt-chain plus router, MCP tool servers, an OAuth gateway, Langfuse for observability. No framework, because I wanted to own every layer.',
     outcome: 'Runs the product’s AI features in production, with every model call traced.',
     stack: ['Python', 'FastAPI', 'MCP', 'Langfuse', 'WebSockets'] },
-  { title: 'Databricks lakehouse migration', years: '2025', writeup: true,
+  { title: 'Databricks lakehouse migration', years: '2025',
     blurb: 'Led the move off scattered scripts that ran for days onto a Databricks and Delta Lake lakehouse: bronze/silver/gold layers, Asset Bundles, parameterized Spark jobs, multi-country fan-out.',
     outcome: 'About 10× faster, shipped incrementally over 292 commits.',
     stack: ['Databricks', 'PySpark', 'Delta Lake', 'Airflow'] },
-  { title: 'Ingestion at 1M+ places', years: '2024', writeup: true,
+  { title: 'Ingestion at 1M+ places', years: '2024',
     blurb: 'Moved batch jobs off the ad-hoc EC2 scripts a human used to babysit onto orchestrated, containerized workloads, streaming through Kinesis, Firehose and a Lambda with Pydantic guarding against upstream schema changes.',
     outcome: '1M+ places matched and indexed, holding steady as upstream sources kept changing shape.',
     stack: ['Kinesis', 'Firehose', 'Lambda', 'Pydantic', 'Kubernetes', 'Airflow'] },
